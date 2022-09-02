@@ -1164,7 +1164,7 @@ function warpF2(f)
     end
     ListFunc[f] = {}
 
-    
+
     connect.Value=100
     connect.Value=0
     
@@ -3381,7 +3381,7 @@ end
 
 --print(a.Search(game.Players.LocalPlayer))
 spawn(function() 
-    while wait() do 
+    while wait(1) do 
         if Settings.AutoMem then
             
 
@@ -3697,7 +3697,7 @@ game.CoreGui.DescendantAdded:Connect(function()
             end)
             if Settings.ToggleAutoRejoin then
                 if not Settings.UsePS then 
-                    while wait() do
+                    while wait(1) do
                         game:GetService("TeleportService"):Teleport(game.PlaceId, plr)
                         wait(5)
                     end
@@ -5038,7 +5038,7 @@ if getgenv().Key == nil then
 end
 -- UI LIB --
 SpawnTable["Stickbug"] = function() 
-    while wait() do
+    while wait(1) do
         if Settings.StickBug and CheckFarm("Stick") then 
             for k,v in pairs(game.Workspace.Monsters:GetChildren()) do 
                 if string.match(v.Name,"Stick Bug") and CheckFarm("Stick") then 
@@ -5190,7 +5190,7 @@ loadstring([[
 local RunSp = 0
 
 SpawnTable["Sprout"] = function() 
-    while wait() do 
+    while wait(1) do 
         if Settings.AutoSprout then
             local Sprout = IsSprout()
             if Sprout ~= nil then
@@ -5215,7 +5215,7 @@ SpawnTable["Sprout"] = function()
 end
 
 SpawnTable["QuestColor"] = function() 
-    while wait() do 
+    while wait(.2) do 
         for k,v in pairs(QuestTF) do 
             local rac = k
             if v and Settings.AutoQ then 
@@ -5252,7 +5252,7 @@ SpawnTable["QuestColor"] = function()
 end
 
 SpawnTable["Quest Pollen"] = function() 
-    while wait() do 
+    while wait(.2) do 
         for k,v in pairs(QuestTF) do 
             local rac = k
             if v and Settings.AutoQ then 
@@ -5282,7 +5282,7 @@ SpawnTable["Quest Pollen"] = function()
     end
 end
 SpawnTable["QuestMob"] = function() 
-    while wait() do 
+    while wait(.2) do 
         if Settings.AutoMob and Settings.Farm and ValidFarm() then
             for k, v in pairs(TimerMob) do
                 if TimerKiet[k] then
@@ -5390,7 +5390,7 @@ SpawnTable["QuestMob"] = function()
 end
 
 SpawnTable["Guiding"] = function() 
-    while wait() do
+    while wait(.2) do
         if Settings.AutoFarmGuiding then
             local rac = game.Workspace.Particles:FindFirstChild("Guiding Star")
             if rac then 
@@ -5406,7 +5406,7 @@ SpawnTable["Guiding"] = function()
     end
 end
 SpawnTable["FarmBoost"] = function() 
-    while wait() do
+    while wait(.2) do
         if Settings.AutoFarmBoost then
             for k, v in pairs(GetCurrentFieldBoost()) do
                 --Field = k
@@ -5422,7 +5422,7 @@ SpawnTable["FarmBoost"] = function()
 end
 
 SpawnTable["Ant"] = function() 
-    while wait() do 
+    while wait(.2) do 
         if (Settings.AutoFAnt or AutoFAnt2) and CheckFarm("Ant") then 
             if not game:GetService("Workspace").Toys["Ant Challenge"].Busy.Value then 
                 if GetCurrenItem("AntPass") > 0 then
@@ -5511,7 +5511,7 @@ SpawnTable["Ant"] = function()
 end
 
 SpawnTable["Snail"] = function() 
-    while wait() do 
+    while wait(2) do 
         if Settings.Snail or ccsnail then
             if CheckSnail() and CheckFarm("Snail") then
                 while  (Settings.Snail or ccsnail) and CheckSnail() and CheckFarm("Snail") do
@@ -5537,7 +5537,7 @@ SpawnTable["Snail"] = function()
     end
 end
 SpawnTable["Mob"] = function() 
-    while wait() do
+    while wait(1) do
         if Settings.KillVici and CheckFarm("Kill") then
             if game:GetService("Workspace").Particles.WTs:FindFirstChild("WaitingThorn") then 
                 if CheckFarm("Kill") then 
@@ -5997,7 +5997,7 @@ local StartC = tick()
 local EndC=StartC
 local fulled = false
 spawn(function() 
-    while wait() do 
+    while wait(.2) do 
         local function Ret() 
             if Settings.FireFace then 
                 local xa = GetNearestFire()
