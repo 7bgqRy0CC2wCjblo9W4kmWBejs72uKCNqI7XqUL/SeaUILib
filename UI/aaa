@@ -3862,7 +3862,8 @@ SpawnTable["Puffroom"] = function()
     while wait(.3) do 
         if Settings.Pushroom then 
             if (#game:GetService("Workspace").Happenings.Puffshrooms:GetChildren()) == 0 then 
-                FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]            else
+                FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]     
+            else
                 local v = GetNearestPushroom()
                 local loncac = true
                 if v then 
@@ -3895,6 +3896,8 @@ SpawnTable["Puffroom"] = function()
                         end
                         FieldFarmPos[Curr] = nil
                     end
+                else
+                    FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]    
                 end
             end
             
