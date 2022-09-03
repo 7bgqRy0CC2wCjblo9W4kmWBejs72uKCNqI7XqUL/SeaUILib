@@ -1158,6 +1158,7 @@ old = hookmetamethod(game,"__index",function(...)
     end
     return old(...)
 end)
+repeat wait() until connect
 function warpF2(f) 
     if not connect2 then 
         connect2=Instance.new("IntValue")
@@ -1771,11 +1772,11 @@ function tpT(t, k, dieukien, disableinstanttp,instanttp)
                         done = true
                     end
                 )
-                noclip = true
+                SetEN("Noclip", "Tween", true)
                 tween:Play()
                 while not done do
                     if not plr.Character:FindFirstChild("HumanoidRootPart") then return end
-                    noclip = true
+                    SetEN("Noclip", "Tween", true)
                     if (plr.Character.HumanoidRootPart.Position - Vector3.new(30.017883300781, 68.458869934082, -146.99607849121)).magnitude <= 130
                     and plr.Character.HumanoidRootPart.Position.Y >= 60
                     and plr.Character.HumanoidRootPart.Position.Y < 80
@@ -1802,10 +1803,10 @@ function tpT(t, k, dieukien, disableinstanttp,instanttp)
                     wait()
                 end
                 tween:Cancel()
-                noclip = false
+                SetEN("Noclip", "Tween", false)
             end
         )
-        noclip = false
+        SetEN("Noclip", "Tween", false)
         return breakdk;
     end
 end
@@ -2104,11 +2105,25 @@ end)() or not Settings.Farm or not Running or not ValidFarm()
         ["Category"] = "Accessory"
     })
 end
-
+local Temp = {
+    Noclip = {}
+}
+function CheckEN(str)
+    local cac = Temp[str]
+    for k, v in pairs(cac) do
+        if v then
+            return true
+        end
+    end
+    return false
+end
+function SetEN(str, cac, rac)
+    Temp[str][cac] = rac
+end
 setfflag("HumanoidParallelRemoveNoPhysics", "False")
 setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
 game:GetService('RunService').Stepped:Connect(function()
-    if noclip then plr.Character.Humanoid:ChangeState(11)
+    if CheckEN("Noclip") then plr.Character.Humanoid:ChangeState(11)
     end
 end)
 function GetValidAntPos() 
@@ -2158,8 +2173,8 @@ end
 function CheckNear(pos,mob) 
     for k,v in pairs(game.Workspace.Monsters:GetChildren()) do 
         if string.match(v.Name,mob) then 
-            if v:FindFirstChild("Torso") then 
-                if (v.Torso.Position-pos.p).magnitude<20 then 
+            if v:FindFirstChild("Torso") or v:FindFirstChild("HumanoidRootPart") then 
+                if ((v:FindFirstChild("Torso") or v:FindFirstChild("HumanoidRootPart")).Position-pos.p).magnitude<20 then 
                     return true
                 end
             end
@@ -2742,89 +2757,89 @@ local Page1 = Main.CreatePage({Page_Name = 'Main', Page_Title = 'Main Tab'})
 local Section11 = Page1.CreateSection('Misc')
 local sent = false
 
-SpawnTable["Stocking"] = function() 
-    while wait(2) do 
-        if Settings.Stocking then 
-            if CheckFarm("Stocking") then 
-                local pos = Vector3.new(232.93347167969, 35.397228240967, 235.30931091309)
-                game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Stockings")
-                for k,v in ipairs(game.Workspace.Collectibles:GetChildren()) do 
-                    if getgenv().IsToken(v) then 
-                        if (v.Position-pos).magnitude<25 and CheckFarm("Stocking") then 
-                            ValidTB["Stock"] = true
-                            StopFarmList["Stocking"] = true
-                            wait(.3)
-                            tpT(v.CFrame, 100)
-                        end
-                    end
-                end
-                ValidTB["Stock"] = false
-                StopFarmList["Stocking"] = false
-            end
-        end
-        if Settings.LidArt then 
-            if CheckFarm("Stocking") then 
-                local pos = game:GetService("Workspace").Toys["Onett's Lid Art"].Platform.Position
-                game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Onett's Lid Art")
-                for k,v in ipairs(game.Workspace.Collectibles:GetChildren()) do 
-                    if getgenv().IsToken(v) then 
-                        if (v.Position-pos).magnitude<25 and CheckFarm("Stocking") then 
-                            ValidTB["Stock"] = true
-                            StopFarmList["Stocking"] = true
-                            wait(.3)
-                            tpT(v.CFrame, 100)
-                        end
-                    end
-                end
-                ValidTB["Stock"] = false
-                StopFarmList["Stocking"] = false
-            end
-        end
-        if Settings.Samovar then 
-            if CheckFarm("Stocking") then 
-                local pos = game:GetService("Workspace").Toys.Samovar.Platform.Position
-                game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Samovar")
-                for k,v in ipairs(game.Workspace.Collectibles:GetChildren()) do 
-                    if getgenv().IsToken(v) then 
-                        if (v.Position-pos).magnitude<25 and CheckFarm("Stocking") then 
-                            ValidTB["Stock"] = true
-                            StopFarmList["Stocking"] = true
-                            wait(.3)
-                            tpT(v.CFrame, 100)
-                        end
-                    end
-                end
-                ValidTB["Stock"] = false
-                StopFarmList["Stocking"] = false
-            end
-        end
-        if Settings.Candle then 
-            game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Honeyday Candles")
-            local platformm = game:GetService("Workspace").Toys["Honeyday Candles"].Platform
-            for i,v in pairs(game.Workspace.Collectibles:GetChildren()) do
-                if (v.Position-platformm.Position).magnitude < 25 and v.CFrame.YVector.Y == 1 then
-                    StopFarmList["Stocking"] = true
-                    tpT(v.CFrame, 100)
-                end
-            end
-        end
+-- SpawnTable["Stocking"] = function() 
+--     while wait(2) do 
+--         if Settings.Stocking then 
+--             if CheckFarm("Stocking") then 
+--                 local pos = Vector3.new(232.93347167969, 35.397228240967, 235.30931091309)
+--                 game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Stockings")
+--                 for k,v in ipairs(game.Workspace.Collectibles:GetChildren()) do 
+--                     if getgenv().IsToken(v) then 
+--                         if (v.Position-pos).magnitude<25 and CheckFarm("Stocking") then 
+--                             ValidTB["Stock"] = true
+--                             StopFarmList["Stocking"] = true
+--                             wait(.3)
+--                             tpT(v.CFrame, 100)
+--                         end
+--                     end
+--                 end
+--                 ValidTB["Stock"] = false
+--                 StopFarmList["Stocking"] = false
+--             end
+--         end
+--         if Settings.LidArt then 
+--             if CheckFarm("Stocking") then 
+--                 local pos = game:GetService("Workspace").Toys["Onett's Lid Art"].Platform.Position
+--                 game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Onett's Lid Art")
+--                 for k,v in ipairs(game.Workspace.Collectibles:GetChildren()) do 
+--                     if getgenv().IsToken(v) then 
+--                         if (v.Position-pos).magnitude<25 and CheckFarm("Stocking") then 
+--                             ValidTB["Stock"] = true
+--                             StopFarmList["Stocking"] = true
+--                             wait(.3)
+--                             tpT(v.CFrame, 100)
+--                         end
+--                     end
+--                 end
+--                 ValidTB["Stock"] = false
+--                 StopFarmList["Stocking"] = false
+--             end
+--         end
+--         if Settings.Samovar then 
+--             if CheckFarm("Stocking") then 
+--                 local pos = game:GetService("Workspace").Toys.Samovar.Platform.Position
+--                 game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Samovar")
+--                 for k,v in ipairs(game.Workspace.Collectibles:GetChildren()) do 
+--                     if getgenv().IsToken(v) then 
+--                         if (v.Position-pos).magnitude<25 and CheckFarm("Stocking") then 
+--                             ValidTB["Stock"] = true
+--                             StopFarmList["Stocking"] = true
+--                             wait(.3)
+--                             tpT(v.CFrame, 100)
+--                         end
+--                     end
+--                 end
+--                 ValidTB["Stock"] = false
+--                 StopFarmList["Stocking"] = false
+--             end
+--         end
+--         if Settings.Candle then 
+--             game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer("Honeyday Candles")
+--             local platformm = game:GetService("Workspace").Toys["Honeyday Candles"].Platform
+--             for i,v in pairs(game.Workspace.Collectibles:GetChildren()) do
+--                 if (v.Position-platformm.Position).magnitude < 25 and v.CFrame.YVector.Y == 1 then
+--                     StopFarmList["Stocking"] = true
+--                     tpT(v.CFrame, 100)
+--                 end
+--             end
+--         end
         
-        StopFarmList["Stocking"] = false
-    end
-end
+--         StopFarmList["Stocking"] = false
+--     end
+-- end
 
-Section11.CreateToggle({Title = 'Auto Stocking', Default = Settings.Stocking}, function(v)
-    Settings.Stocking = v
-end)
-Section11.CreateToggle({Title = 'Auto Samovar', Default = Settings.Samovar}, function(v)
-    Settings.Samovar = v
-end)
-Section11.CreateToggle({Title = 'Auto Lid Art', Default = Settings.LidArt}, function(v)
-    Settings.LidArt = v
-end)
-Section11.CreateToggle({Title = 'Auto Lid Candle', Default = Settings.Candle}, function(v)
-    Settings.Candle = v
-end)
+-- Section11.CreateToggle({Title = 'Auto Stocking', Default = Settings.Stocking}, function(v)
+--     Settings.Stocking = v
+-- end)
+-- Section11.CreateToggle({Title = 'Auto Samovar', Default = Settings.Samovar}, function(v)
+--     Settings.Samovar = v
+-- end)
+-- Section11.CreateToggle({Title = 'Auto Lid Art', Default = Settings.LidArt}, function(v)
+--     Settings.LidArt = v
+-- end)
+-- Section11.CreateToggle({Title = 'Auto Lid Candle', Default = Settings.Candle}, function(v)
+--     Settings.Candle = v
+-- end)
 Section11.CreateToggle({Title = 'Auto Start Metor Shower', Default = Settings.MetorStart}, function(v)
     Settings.MetorStart = v
     spawn(function() 
@@ -3844,7 +3859,7 @@ else
     puffpart = game.Workspace.FlowerZones:FindFirstChild("PuffField")
 end
 SpawnTable["Puffroom"] = function() 
-    while wait(1) do 
+    while wait(.3) do 
         if Settings.Pushroom then 
             if (#game:GetService("Workspace").Happenings.Puffshrooms:GetChildren()) == 0 then 
                 FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]            else
@@ -5044,13 +5059,13 @@ SpawnTable["Stickbug"] = function()
                 if string.match(v.Name,"Stick Bug") and CheckFarm("Stick") then 
                     if Settings.StickBug and v.Parent and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health>0 then 
                         StopFarmList["Stick"]=true
-                        noclip=true
+                        SetEN("Noclip", "Stick", true)
                         Killing=true
                        repeat wait()
                         if plr.Character:FindFirstChild("HumanoidRootPart") and v.Parent and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health>0 and CheckFarm("Stick") then 
                             local txt = plr.PlayerGui.ScreenGui.ChallengeInfo.SBChallengeInfo.TargetValue.Text
                             if Settings.FarmTotem and game.Workspace.Particles:FindFirstChild("StickBugTotem") then
-                                noclip=false
+                                SetEN("Noclip", "Stick", false)
                                 wait(.1)
                                 if game.Workspace.Particles:FindFirstChild("StickBugTotem") then 
                                     StopFarmList["Stick"]=false
@@ -5060,12 +5075,12 @@ SpawnTable["Stickbug"] = function()
                             else
                                 if v:FindFirstChild("Immune") and v.Immune.Value==true then
                                     StopFarmList["Stick"]=false
-                                    noclip=false
+                                    SetEN("Noclip", "Stick", false)
                                     wait(.1)
                                     FarmFieldList["StickBug"] = GetFieldByText(txt)
                                 else
                                     ValidTB["StickBug"]=true
-                                    noclip=true
+                                    SetEN("Noclip", "Stick", true)
                                     local constick=v
                                     for k,v in pairs(game.Workspace.Collectibles:GetChildren()) do 
                                         local tf = Vector3.new(v.Position.X,0,v.Position.Z)
@@ -5075,8 +5090,10 @@ SpawnTable["Stickbug"] = function()
                                             wait(.2)
                                         end
                                     end
-                                    noclip=true
-                                    plr.Character.HumanoidRootPart.CFrame=v.HumanoidRootPart.CFrame
+                                    SetEN("Noclip", "Stick", true)
+                                    if v:FindFirstChild("HumanoidRootPart") then 
+                                        plr.Character.HumanoidRootPart.CFrame=v.HumanoidRootPart.CFrame
+                                    end
                                 end
                             end
                             
@@ -5085,7 +5102,7 @@ SpawnTable["Stickbug"] = function()
                         Killing=false
                         ValidTB["StickBug"] = false
                         StopFarmList["Stick"]=false
-                        noclip=false
+                        SetEN("Noclip", "Stick", false)                    
                     end
                 end
             end
@@ -5099,98 +5116,48 @@ SpawnTable["Stickbug"] = function()
 end
 
 getfenv().Settings=Settings
-loadstring([[
-    function IsInArr(it, arr)
-        for k, v in pairs(arr) do
-            if v == it then
-                return true
-            end
+function IsInArr(it, arr)
+    for k, v in pairs(arr) do
+        if v == it then
+            return true
         end
-        return false
     end
-    local Blacklist = {"Gummy Bear", "Ant Challenge Info", "Bubble Bee Man 2", "Stick Bug"}
-    local plr = game.Players.LocalPlayer
-    game:GetService("RunService").Stepped:connect(function()
-        if plr.PlayerGui.ScreenGui.NPC.Visible == true
-        and Settings.AutoQuest
-        then 
-            plr.PlayerGui.Camera.Controllers.NPC.IncrementDialogue:Invoke()
-        end
-    end)
-    spawn(function()
-        while wait(2) do
-            if Settings.AutoQuest and not Selling then
-                for _, v in ipairs(game.Workspace.NPCs:GetChildren()) do
-                    if v:FindFirstChild("Platform") and v.Platform.AlertPos.AlertGui.ImageLabel.ImageTransparency == 0 and not IsInArr(v.Name, Blacklist) and CheckQuestReq(v.Name)
-                    and (function() 
-                        if (Settings.IgnoreHoneyBee) then
-                            if v.Name=="Honey Bee" then return false end
-                        end
-                        return true
-                    end)() then
-                        if Settings.AutoQuest and not Selling then
-                            wait(.1)
-                            local cf = v.Platform.CFrame
-                            local old = v.Platform.CFrame
-                            v.Platform.CanCollide = false
-                            local x = plr.Character:WaitForChild("HumanoidRootPart").Position
-                            v.Platform.CFrame =
-                                CFrame.new(
-                                x.X,
-                                x.Y - 7,
-                                x.Z,
-                                2.11000443e-05,
-                                0.0596015155,
-                                0.998222232,
-                                -1,
-                                2.11000443e-05,
-                                1.9878149e-05,
-                                -1.9878149e-05,
-                                -0.998222232,
-                                0.0596014857
-                            )
-
-                            wait(.2)
-                            if
-                                string.match(
-                                    plr.PlayerGui.ScreenGui.ActivateButton.TextBox.Text,
-                                    "Talk"
-                                )
-                             then
-                                local x = plr.Character:WaitForChild("HumanoidRootPart").Position
-                                v.Platform.CFrame =
-                                CFrame.new(
-                                x.X,
-                                x.Y - 7,
-                                x.Z,
-                                2.11000443e-05,
-                                0.0596015155,
-                                0.998222232,
-                                -1,
-                                2.11000443e-05,
-                                1.9878149e-05,
-                                -1.9878149e-05,
-                                -0.998222232,
-                                0.0596014857
-                            )
-                                game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.E, false, nil)
-                            end
-                            wait(.1)
-                            repeat wait(.1)
-                            until plr.PlayerGui.ScreenGui.NPC.Visible == false or not Settings.AutoQuest
-                            wait(.1)
-                            v.Platform.CFrame=old
-                        end
+    return false
+end
+local Blacklist = {"Gummy Bear", "Ant Challenge Info", "Bubble Bee Man 2", "Stick Bug"}
+game:GetService("RunService").Stepped:connect(function()
+    if plr.PlayerGui.ScreenGui.NPC.Visible == true
+    and Settings.AutoQuest
+    then 
+        plr.PlayerGui.Camera.Controllers.NPC.IncrementDialogue:Invoke()
+    end
+end)
+spawn(function()
+    while wait(2) do
+        if Settings.AutoQuest and not Selling then
+            for _, v in ipairs(game.Workspace.NPCs:GetChildren()) do
+                if v:FindFirstChild("Platform") and v.Platform.AlertPos.AlertGui.ImageLabel.ImageTransparency == 0 and not IsInArr(v.Name, Blacklist) and CheckQuestReq(v.Name)
+                and (function() 
+                    if (Settings.IgnoreHoneyBee) then
+                        if v.Name=="Honey Bee" then return false end
+                    end
+                    return true
+                end)() then
+                    if Settings.AutoQuest and not Selling then        
+                        local cac = require(game.ReplicatedStorage.Activatables.NPCs)
+                        cac.ButtonEffect(game.Players.LocalPlayer,game:GetService("Workspace").NPCs[v.Name])
+                        repeat wait(.1)
+                        until plr.PlayerGui.ScreenGui.NPC.Visible == false or not Settings.AutoQuest
+                        wait(.1)
                     end
                 end
             end
         end
-    end)
-]])()
-local RunSp = 0
+    end
+end)
 
 SpawnTable["Sprout"] = function() 
-    while wait(1) do 
+    while wait(.2) do 
         if Settings.AutoSprout then
             local Sprout = IsSprout()
             if Sprout ~= nil then
@@ -5440,7 +5407,7 @@ SpawnTable["Ant"] = function()
                         repeat wait() until plr.Character:FindFirstChild("Humanoid")
                         wait(1)
                        -- if AntMethod=="Filing" then 
-                            noclip=true
+                            SetEN("Noclip", "Ant", true)
                             plr.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(92.6141205, 45.4476166, 547.385254, -1, -4.76778114e-05, 8.39982658e-06, -6.96244262e-09, 0.173648417, 0.98480773, -4.84120937e-05, 0.98480773, -0.173648417)
                             for _,v in pairs(plr.Character:GetChildren()) do 
                                 if v:IsA("Tool") then 
@@ -5461,7 +5428,7 @@ SpawnTable["Ant"] = function()
                                 local yup = 56
                                  local ydown =32
                                  local cac
-                                 noclip=true
+                                 SetEN("Noclip", "Ant", true)
                                  if CheckNear(validpos,"Ant") then 
                                      cac=CFrame.new(validpos.X,yup,validpos.Z)
                                  else
@@ -5499,7 +5466,7 @@ SpawnTable["Ant"] = function()
                         until not game:GetService("Workspace").Toys["Ant Challenge"].Busy.Value or not (Settings.AutoFAnt or AutoFAnt2) or not CheckFarm("Ant")
                         game.ReplicatedStorage.Events.ItemPackageEvent:InvokeServer("Equip",{["Mute"] = false,["Type"] = old,["Category"] = "Collector"})
                         Killing=false
-                        noclip=false
+                        SetEN("Noclip", "Ant", false)
                         ValidAnt=true
                     end
                    
@@ -5522,7 +5489,7 @@ SpawnTable["Snail"] = function()
                         "HumanoidRootPart"
                     )
                     tpT(CFrame.new(405, 72.7, -176), 100)
-                    noclip = true
+                    SetEN("Noclip", "Snail", true)
                     wait()
                 end
                 Killing = false
@@ -5530,7 +5497,7 @@ SpawnTable["Snail"] = function()
                     workspace:WaitForChild(plr.Name):WaitForChild("HumanoidRootPart")
                 uTorso.CFrame = GetFieldByName("Stump Field").CFrame
                 wait(.4)
-                noclip = false
+                SetEN("Noclip", "Snail", false)
             end
         end
         StopFarmList["Snail"] = false
@@ -5541,9 +5508,12 @@ SpawnTable["Mob"] = function()
         if Settings.KillVici and CheckFarm("Kill") then
             if game:GetService("Workspace").Particles.WTs:FindFirstChild("WaitingThorn") then 
                 if CheckFarm("Kill") then 
-                    StopFarmList["Kill"] = true
-                    tpT(game:GetService("Workspace").Particles.WTs.WaitingThorn.CFrame)
-                    wait(.5)
+                    local nr = GetNerestFieldByObject(game:GetService("Workspace").Particles.WTs:FindFirstChild("WaitingThorn"))
+                    if CheckFieldReq(nr) then 
+                        StopFarmList["Kill"] = true
+                        tpT(game:GetService("Workspace").Particles.WTs.WaitingThorn.CFrame)
+                        wait(.5)
+                    end
                 end
             else
                 if CheckFarm("Kill") then
@@ -5560,7 +5530,7 @@ SpawnTable["Mob"] = function()
                                                 if CheckFarm("Kill") then 
                                                     if v:FindFirstChild("Torso") or v:FindFirstChild("HumanoidRootPart") then 
                                                         Killing = true
-                                                        noclip=true
+                                                        SetEN("Noclip", "Kill", true)
                                                         tpT(vicous.CFrame* CFrame.new(0, -5, 5))
                                                         CollectAttackTokens()
                                                     end
@@ -5575,7 +5545,7 @@ SpawnTable["Mob"] = function()
                             end
                         end
                     end
-                    noclip=false
+                    SetEN("Noclip", "Kill", false)
                 end
             end
             StopFarmList["Kill"] = false
@@ -5585,11 +5555,11 @@ SpawnTable["Mob"] = function()
                 local nr = GetNerestFieldByObject(game.Workspace.NPCBees:FindFirstChild("Windy"))
                 if CheckFieldReq(nr) then 
                     if getgenv().IsValidTokenPos(game.Workspace.NPCBees:FindFirstChild("Windy"), nr) then
-                        noclip = true
+                        SetEN("Noclip", "Kill", true)
                         Valid = false
                         StopFarmList["Kill"] = true
                         tpT(game.Workspace.NPCBees.Windy.CFrame, 100)
-                        noclip = false
+                        SetEN("Noclip", "Kill", false)
                     end
                 end
             end
@@ -5602,9 +5572,7 @@ SpawnTable["Mob"] = function()
                         Killing = true
                         repeat wait()
                             if v:FindFirstChild("Torso") then
-                                if noclip == false then
-                                    noclip = true
-                                end
+                                SetEN("Noclip", "Kill", true)
                                 StopFarmList["Kill"] = true
                                 tpT(CFrame.new(v.Torso.Position.x, v.Torso.Position.y + 20, v.Torso.Position.z), 100)
                                 CollectAttackTokens()
@@ -5612,9 +5580,7 @@ SpawnTable["Mob"] = function()
                         until not game.workspace.Monsters:FindFirstChild("KillingWindyBee") or
                         Settings.KillWindy == false or not CheckFarm("Kill")
                         Killing = false
-                        if noclip == true then
-                            noclip = false
-                        end
+                        SetEN("Noclip", "Kill", false)
                         wait(5)                   
                         StopFarmList["Kill"] = false
                         if ValidFarm() and CheckFarm("Kill") then
@@ -5656,19 +5622,19 @@ SpawnTable["Mob"] = function()
                 ), 100)  
                 wait(1.5)
                 if Settings.KillCrab == true then
-                    noclip = true
+                    SetEN("Noclip", "Kill", true)
                     while CheckCoco() and wait() and Settings.KillCrab  and CheckFarm("Kill") do
                         StopFarmList["Kill"] = true
                         Killing = true
 
                         -- plr.Character:WaitForChild("HumanoidRootPart").CFrame =
                         --     CFrame.new(-261.811249, 115.952774, 503.228455, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-                        noclip = true
+                        SetEN("Noclip", "Kill", true)
                             tpT(CFrame.new(-261.811249, 115.952774, 503.228455, 1, 0, 0, 0, 1, 0, 0, 0, 1), 100)
                     end
                     Killing = false
 
-                    noclip = false
+                    SetEN("Noclip", "Kill", false)
 
                     if Settings.KillCrab  and Settings.Farm and CheckFarm("Kill") then
                         wait(5)
@@ -5720,15 +5686,15 @@ SpawnTable["Mob"] = function()
                         local tun = GetTunnel()
                         wait()
                         if tun and tun:FindFirstChild("HumanoidRootPart") then
-                            noclip = true
+                            SetEN("Noclip", "Kill", true)
                             plr.Character:WaitForChild("HumanoidRootPart").CFrame =
                                 tun.HumanoidRootPart.CFrame + Vector3.new(0, 20, 0)
                         end
                     until not CheckTunnel() or not (Settings.AutoTunnel or AutoTunnel2) or tick() - ticcc > 60 or not CheckFarm("Kill")
                     Killing = false
                 end
-                noclip = false
-                wait(2)
+                SetEN("Noclip", "Kill", false)
+            wait(2)
                 if (Settings.AutoTunnel or AutoTunnel2) then
                     for i = 1, 3 do
                         for k, v in pairs(game.Workspace.Collectibles:GetChildren()) do
@@ -5760,7 +5726,7 @@ SpawnTable["Mob"] = function()
                         StopFarmList["Kill"] = true
                         Killing = true
                         wait()
-                        noclip = true
+                        SetEN("Noclip", "Kill", true)
                         if v:FindFirstChild("Head") then
                             tpT(CFrame.new(v.Head.Position.x + 25, 176.4, v.Head.Position.z + 25), 100)
                         end
@@ -5768,7 +5734,7 @@ SpawnTable["Mob"] = function()
                     until not game.workspace.Monsters:FindFirstChild("KillingMondo Chick")
                     or not Settings.AutoMondo or not CheckFarm("Kill")
                     Killing = false
-                    noclip = false
+                    SetEN("Noclip", "Kill", false)
                     wait(1)
                     if Settings.Farm and Settings.AutoMondo and CheckFarm("Kill") then
                         StopFarmList["Kill"] = false
@@ -5824,7 +5790,7 @@ SpawnTable["Mob"] = function()
                     end
                     local comman = GetComandoMob()
                     if comman then
-                        noclip = true
+                        SetEN("Noclip", "Kill", true)
                         plr.Character:WaitForChild("HumanoidRootPart").CFrame = comman.HumanoidRootPart.CFrame + Vector3.new(0, 15, 0)
                         CollectAttackTokens(20)
                     else
@@ -5832,7 +5798,7 @@ SpawnTable["Mob"] = function()
                     end
                 end
                 Killing = false
-                noclip = false
+                SetEN("Noclip", "Kill", false)
                 plr.Character:WaitForChild("HumanoidRootPart").CFrame = ToPos
                 wait(3)
                 for k, v in pairs(game.Workspace.Collectibles:GetChildren()) do
@@ -5866,7 +5832,7 @@ SpawnTable["Mob"] = function()
                 tpT( CFrame.new(167.829041, 6.20121384, 182.805527), 100)
                 repeat wait() until GetKing() or not CheckFarm("Kill") or not Settings.AutoKing
                 local King = GetKing()
-                noclip=true
+                SetEN("Noclip", "Kill", true)
                 repeat wait()
                     Killing = true
                     if King and King:FindFirstChild("Torso") then
@@ -5874,7 +5840,7 @@ SpawnTable["Mob"] = function()
                     end
                 until not GetKing() or not CheckKing() or not (Settings.AutoKing or AutoKing2) or not CheckFarm("Kill")
                 Killing = false
-                noclip = false
+                SetEN("Noclip", "Kill", false)
                 wait(2)
                 for i=1,3 do 
                     for k, v in pairs(game.Workspace.Collectibles:GetChildren()) do
@@ -5906,7 +5872,7 @@ SpawnTable["Mob"] = function()
                 if string.match(v.Name:lower(),"snowbear") then 
                     if v:FindFirstChild("HumanoidRootPart") then 
                         repeat wait()
-                            noclip = true
+                            SetEN("Noclip", "Kill", true)
                             Killing = true
                             StopFarmList["Kill"] = true
                             ValidTB["Snowbear"] = true
@@ -5915,7 +5881,7 @@ SpawnTable["Mob"] = function()
                         end
                         until not v.Parent or not v:FindFirstChild("HumanoidRootPart") or not v:FindFirstChild("Humanoid") or v.Humanoid.Health==0 or not Settings.SnowBear or not CheckFarm("Kill")
                         Killing = false
-                        noclip = false
+                        SetEN("Noclip", "Kill", false)
                         ValidTB["Snowbear"] = false
                     end
                 end
@@ -6097,7 +6063,7 @@ SpawnTable["Farm"] = function()
                                 and plr.Character:FindFirstChild("HumanoidRootPart")
                                 and Settings.Farm then
                                     tpT(old*CFrame.new(0,10,0), 100)
-                                    noclip=true
+                                    SetEN("Noclip", "Sprinkler", true)
                                     --plr.Character:WaitForChild("Humanoid").Jump = true
                                     wait(.8)
                                     game.ReplicatedStorage.Events.PlayerActivesCommand:FireServer(
@@ -6106,7 +6072,7 @@ SpawnTable["Farm"] = function()
                                     wait(1.5)
                                 end
                             end
-                            noclip=false
+                            SetEN("Noclip", "Sprinkler", false)
                             tpT(old, 100)
                         end
                         
@@ -6158,7 +6124,7 @@ SpawnTable["Farm"] = function()
                             end
                             wait(.1)
                             EnableGlider()
-                            noclip=false
+                            SetEN("Noclip", "Glider", false)
                         else
                             
                         end
@@ -6188,11 +6154,13 @@ SpawnTable["Farm"] = function()
                                      posc = Vector3.new(457.4714050293, 96.247131347656, -137.40628051758)
                                      posd = Vector3.new(457.81576538086, 96.247138977051, -215.57917785645)
                                 else
-                                    local FieldID = GetFieldByName(TempField).ID.Value
-                                    posa = GetFlower("FP"..FieldID,0,0).Position
-                                    posb = GetFlower("FP"..FieldID,FieldXY[TempField].X,0).Position
-                                    posc = GetFlower("FP"..FieldID,FieldXY[TempField].X,FieldXY[TempField].Y).Position
-                                    posd = GetFlower("FP"..FieldID,0,FieldXY[TempField].Y).Position
+                                    if GetFieldByName(TempField):FindFirstChild("ID") then 
+                                        local FieldID = GetFieldByName(TempField).ID.Value
+                                        posa = GetFlower("FP"..FieldID,0,0).Position
+                                        posb = GetFlower("FP"..FieldID,FieldXY[TempField].X,0).Position
+                                        posc = GetFlower("FP"..FieldID,FieldXY[TempField].X,FieldXY[TempField].Y).Position
+                                        posd = GetFlower("FP"..FieldID,0,FieldXY[TempField].Y).Position
+                                    end
                                     --print(posa,posb,posc,posd)
                                 end
                                 
@@ -6270,9 +6238,9 @@ SpawnTable["Farm"] = function()
                             if getgenv().IsValidTokenPos(v, TempField) and ValidFarm() and Settings.Farm then
                                 Walkk(CFrame.new(v.Position.X, plr.Character:WaitForChild("HumanoidRootPart").Position.Y, v.Position.Z))
                                 local phantram = Settings.CrossHairStand or 0
-                                print(phantram)
+                                --print(phantram)
                                 if plr.CoreStats.Pollen.Value >= (plr.CoreStats.Capacity.Value*phantram)/100 then 
-                                    print("tvk")
+                                    --print("tvk")
                                     repeat wait() until not v.Parent or not Settings.CrossHair
                                 end
                             end
