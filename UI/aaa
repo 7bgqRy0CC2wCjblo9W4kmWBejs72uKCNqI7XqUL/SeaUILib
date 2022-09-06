@@ -1553,8 +1553,6 @@ local HoneyTokenId="1472135114"
 
 
 -- TVK LIB
-local cac = loadstring([[
-    plr = game.Players.LocalPlayer
     getgenv().IsValidTokenPos = function(token, Field,infield)
         local kc = 60
         local Field = GetFieldByName(Field)
@@ -1669,8 +1667,7 @@ local cac = loadstring([[
         else
             return nil
         end
-    end    
-]])()
+    end
 
 
 function NoFire(token) 
@@ -6378,7 +6375,7 @@ SpawnTable["Farm"] = function()
                     if StartC-EndC>Settings.StayField then 
                         Selling=true
                         getfenv().Selling=Selling
-                        if Settings.AutoMicro and GetCurrenMicro() > 0 then
+                        if Settings.AutoMicro and  GetCurrenMicro() and GetCurrenMicro() > 0 then
                             game.ReplicatedStorage.Events.PlayerActivesCommand:FireServer(
                                 {["Name"] = "Micro-Converter"}
                             )
