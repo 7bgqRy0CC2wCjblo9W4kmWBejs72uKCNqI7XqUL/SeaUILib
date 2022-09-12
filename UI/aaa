@@ -2913,7 +2913,6 @@ Section11.CreateToggle({Title = 'Auto Receive Badge', Default = Settings.AutoBad
     end)
 end)
 local Dispensers = {
-    "Gingerbread House",
     "Glue Dispenser",
     "Wealth Clock",
     "Strawberry Dispenser",
