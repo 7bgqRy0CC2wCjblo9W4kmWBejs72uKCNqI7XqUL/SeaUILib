@@ -2846,6 +2846,17 @@ Section11.CreateToggle({Title = 'Auto Start Metor Shower', Default = Settings.Me
         end
     end)
 end)
+Section11.CreateToggle({Title = 'Auto Farm Metor Shower', Default = Settings.MetorFarm}, function(v)
+    Settings.MetorFarm = v
+end)
+
+spawn(function() 
+    while wait() do 
+        if Settings.MetorFarm then
+        
+       end
+    end
+end)
 Section11.CreateToggle({Title = 'Auto Snow Machine', Default = Settings.SnowStart}, function(v)
     Settings.SnowStart = v
     spawn(function() 
@@ -2915,7 +2926,7 @@ local Dispensers = {
 function AutoUseDispenser()
     while Settings.AutoDispenser and wait(2) do 
         for i, v in pairs(Dispensers) do
-            if CheckToyCD(v) then 
+            if CheckToy(v) then 
                 game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer(v)
             end
         end
@@ -3062,7 +3073,7 @@ SpawnTable["Field Boost"] = function()
         for k, v in pairs(ListFieldBoost) do
             if TFListFieldBoost[v]
             and not (TFListFieldBoost["Only enable when theres no boost (Setting)"]
-            and IsAnyBoost()) and CheckToyCD(v) then
+            and IsAnyBoost()) and CheckToy(v) then
                 game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer(v)
                 wait(3)
             end
