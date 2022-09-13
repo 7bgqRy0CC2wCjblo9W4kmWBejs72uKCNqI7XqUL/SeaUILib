@@ -5030,6 +5030,9 @@ function AutoSave()
         wait(5)
     end
 end
+ScriptSettingSection.CreateToggle({Title = 'Anti Bug', Default = Settings.AntiBug}, function(v)
+    Settings.AntiBug = v
+end)
 ScriptSettingSection.CreateToggle({Title = 'Auto Save', Default = Settings.AutoSave}, function(v)
     Settings.AutoSave = v
     if v then
@@ -6434,51 +6437,62 @@ SpawnTable["Farm"] = function()
         end
     end
 end
-
+local hashh = {}
 for k,v in pairs(SpawnTable) do 
-    spawn(function() 
+    SpawnTable[k] = function() 
         xpcall(v,function(e) 
-            local tb = {
-                content = "Error",
-                embeds = {
-                    {
-                        color = nil,
-                        fields = {
-                            {
-                                name = "Error Mess",
-                                value = e
+            if Settings.AntiBug then 
+                spawn(function() 
+                    SpawnTable[k]()
+                end)
+            end
+            if not hashh[k] then 
+                local tb = {
+                    content = "Error",
+                    embeds = {
+                        {
+                            color = nil,
+                            fields = {
+                                {
+                                    name = "Error Mess",
+                                    value = e
+                                },
+                                {
+                                    name = "Exploit Used",
+                                    value = Exploit
+                                },
+                                {
+                                    name = "Error in",
+                                    value = k
+                                }
                             },
-                            {
-                                name = "Exploit Used",
-                                value = Exploit
-                            },
-                            {
-                                name = "Error in",
-                                value = k
+                            author = {
+                                name = "Sea Hub Bee Swarm Simulator Bug Reporter"
                             }
-                        },
-                        author = {
-                            name = "Sea Hub Bee Swarm Simulator Bug Reporter"
                         }
                     }
                 }
-            }
-            print(e)
-            print(debug.traceback())
-            local a =
-                syn.request(
-                {
-                    Url = "https://discord.com/api/webhooks/848166928446783489/ACsHIldjqsXk3TqmBX9AyrJOU6phGfX9F1cBN86P_QXjvHQ3CMcKYr5yuvRw4TvcAA_r",
-                    Method = "POST",
-                    Body = HttpService:JSONEncode(tb),
-                    Headers = {
-                        ["Content-Type"] = "application/json"
+                hashh[k] = true
+                print(e)
+                print(debug.traceback())
+                local a =
+                    syn.request(
+                    {
+                        Url = "https://discord.com/api/webhooks/848166928446783489/ACsHIldjqsXk3TqmBX9AyrJOU6phGfX9F1cBN86P_QXjvHQ3CMcKYr5yuvRw4TvcAA_r",
+                        Method = "POST",
+                        Body = HttpService:JSONEncode(tb),
+                        Headers = {
+                            ["Content-Type"] = "application/json"
+                        }
                     }
-                }
-            )
+                )
+                
+            end
             
             print("Found bug. Reported to tvk1308.")
-            
         end)
-    end)
+    end
+end
+for k,v in pairs(SpawnTable) do 
+    spawn(v)
 end
