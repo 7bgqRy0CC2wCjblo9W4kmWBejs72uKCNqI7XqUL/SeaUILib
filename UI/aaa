@@ -62,7 +62,6 @@ function ToST(tabl, s)
     for k, v in pairs(tabl) do
        out[k]=s
     end
-
     return out
 end
 
@@ -2712,7 +2711,14 @@ local Field = CurrentField
 local TempField = Field
 
 local LevelFarmVK = vToK(LevelFarm)
-local FarmFieldList = ToST(LevelFarmVK,CurrentField)
+local FarmFieldList = setmetatable({},{
+    __index = function(self,index)
+        if LevelFarmVK[index]==1 then return end
+        return self[LevelFarm[LevelFarmVK[index]-1]]
+    end
+}) 
+FarmFieldList["CurrentField"] = Settings.CurrentField or "Sunflower Field"
+
 
 getgenv().isActiveTokens = function(v)
     if v and v:IsA("Part") then
@@ -2846,9 +2852,7 @@ Section11.CreateToggle({Title = 'Auto Start Metor Shower', Default = Settings.Me
         end
     end)
 end)
-Section11.CreateToggle({Title = 'Auto Farm Metor Shower', Default = Settings.MetorFarm}, function(v)
-    Settings.MetorFarm = v
-end)
+
 
 spawn(function() 
     while wait() do 
@@ -2925,9 +2929,9 @@ local Dispensers = {
 function AutoUseDispenser()
     while Settings.AutoDispenser and wait(2) do 
         for i, v in pairs(Dispensers) do
-            if CheckToy(v) then 
-                game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer(v)
-            end
+            warpF2(function( ) 
+                require(game.ReplicatedStorage.Activatables.Toys):ButtonEffect(game.Workspace.Toys[v])
+            end)
         end
     end
 end
@@ -3072,9 +3076,11 @@ SpawnTable["Field Boost"] = function()
         for k, v in pairs(ListFieldBoost) do
             if TFListFieldBoost[v]
             and not (TFListFieldBoost["Only enable when theres no boost (Setting)"]
-            and IsAnyBoost()) and CheckToy(v) then
-                game:GetService("ReplicatedStorage").Events.ToyEvent:FireServer(v)
-                wait(3)
+            and IsAnyBoost()) then
+                warpF2(function( ) 
+                    require(game.ReplicatedStorage.Activatables.Toys):ButtonEffect(game.Workspace.Toys[v])
+                end)
+                wait(1)
             end
         end
     end
@@ -3869,7 +3875,7 @@ SpawnTable["Puffroom"] = function()
     while wait(.3) do 
         if Settings.Pushroom then 
             if (#game:GetService("Workspace").Happenings.Puffshrooms:GetChildren()) == 0 then 
-                FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]     
+                FarmFieldList["Pushroom"] = nil--["Pushroom"]-1]]     
             else
                 local v = GetNearestPushroom()
                 local loncac = true
@@ -3904,12 +3910,12 @@ SpawnTable["Puffroom"] = function()
                         FieldFarmPos[Curr] = nil
                     end
                 else
-                    FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]    
+                    FarmFieldList["Pushroom"] = nil--["Pushroom"]-1]]    
                 end
             end
             
         else
-            FarmFieldList["Pushroom"] = FarmFieldList[LevelFarm[LevelFarmVK["Pushroom"]-1]]
+            FarmFieldList["Pushroom"] = nil--["Pushroom"]-1]]
         end
     end
 end
@@ -5119,7 +5125,7 @@ SpawnTable["Stickbug"] = function()
         end
         if Settings.StickBug and plr.PlayerGui.ScreenGui.ChallengeInfo.Visible==true then 
         else
-            FarmFieldList["StickBug"] = FarmFieldList[LevelFarm[LevelFarmVK["StickBug"]-1]]
+            FarmFieldList["StickBug"] = nil--["StickBug"]-1]]
             StopFarmList["Stick"]=false
         end
     end
@@ -5187,7 +5193,7 @@ SpawnTable["Sprout"] = function()
             else
             end
         end
-        FarmFieldList["Sprout"] = FarmFieldList[LevelFarm[LevelFarmVK["Sprout"]-1]] 
+        FarmFieldList["Sprout"] = nil--["Sprout"]-1]] 
     end
 end
 
@@ -5224,7 +5230,7 @@ SpawnTable["QuestColor"] = function()
                 end
             end
         end
-        FarmFieldList["QuestPollen"] = FarmFieldList[LevelFarm[LevelFarmVK["QuestPollen"]-1]] 
+        FarmFieldList["QuestPollen"] = nil--["QuestPollen"]-1]] 
     end
 end
 
@@ -5255,7 +5261,7 @@ SpawnTable["Quest Pollen"] = function()
                 end
             end
         end
-        FarmFieldList["QuestField"] = FarmFieldList[LevelFarm[LevelFarmVK["QuestField"]-1]] 
+        FarmFieldList["QuestField"] = nil--["QuestField"]-1]] 
     end
 end
 SpawnTable["QuestMob"] = function() 
@@ -5281,7 +5287,7 @@ SpawnTable["QuestMob"] = function()
                     end
                 end
             end
-            FarmFieldList["QuestMob"] = FarmFieldList[LevelFarm[LevelFarmVK["QuestMob"]-1]] 
+            FarmFieldList["QuestMob"] = nil--["QuestMob"]-1]] 
         end
 
         for k,v in pairs(QuestTF) do 
@@ -5362,7 +5368,7 @@ SpawnTable["QuestMob"] = function()
             end
         end
 
-        FarmFieldList["QuestMob"] = FarmFieldList[LevelFarm[LevelFarmVK["QuestMob"]-1]] 
+        FarmFieldList["QuestMob"] = nil--["QuestMob"]-1]] 
     end
 end
 
@@ -5378,12 +5384,12 @@ SpawnTable["Guiding"] = function()
                 end
             end
         end
-        FarmFieldList["Guiding"] = FarmFieldList[LevelFarm[LevelFarmVK["Guiding"]-1]] 
+        FarmFieldList["Guiding"] = nil--["Guiding"]-1]] 
        
     end
 end
 SpawnTable["FarmBoost"] = function() 
-    while wait(.2) do
+    while wait(1) do
         if Settings.AutoFarmBoost then
             for k, v in pairs(GetCurrentFieldBoost()) do
                 --Field = k
@@ -5394,7 +5400,7 @@ SpawnTable["FarmBoost"] = function()
                 until IsBoostEnd(k) or not Settings.AutoFarmBoost
             end
         end
-        FarmFieldList["FieldBoost"] = FarmFieldList[LevelFarm[LevelFarmVK["FieldBoost"]-1]] 
+        FarmFieldList["FieldBoost"] = nil--["FieldBoost"]-1]] 
     end
 end
 
@@ -5598,7 +5604,7 @@ SpawnTable["Mob"] = function()
                             if getgenv().IsValidTokenPos(plr.Character:WaitForChild("HumanoidRootPart"), nre) then       
                                 FarmFieldList["Mob"] = nre
                                 wait(10)
-                                FarmFieldList["Mob"] = FarmFieldList[LevelFarm[LevelFarmVK["Mob"]-1]] 
+                                FarmFieldList["Mob"] = nil--["Mob"]-1]] 
                             end
                         end
                     end
@@ -5658,7 +5664,7 @@ SpawnTable["Mob"] = function()
                                 break
                             end
                         end
-                        FarmFieldList["Mob"] = FarmFieldList[LevelFarm[LevelFarmVK["Mob"]-1]] 
+                        FarmFieldList["Mob"] = nil--["Mob"]-1]] 
                     end
                 else
                     Valid = old
@@ -5761,7 +5767,7 @@ SpawnTable["Mob"] = function()
                             end
                             wait(1)
                         end
-                        FarmFieldList["Mob"] = FarmFieldList[LevelFarm[LevelFarmVK["Mob"]-1]] 
+                        FarmFieldList["Mob"] = nil--["Mob"]-1]] 
                         NoSell=false
                     end
                     Valid = true
@@ -5897,7 +5903,7 @@ SpawnTable["Mob"] = function()
                 end
             end
         end
-        FarmFieldList["Mob"] = FarmFieldList[LevelFarm[LevelFarmVK["Mob"]-1]] 
+        FarmFieldList["Mob"] = nil--["Mob"]-1]] 
         Valid=true
         StopFarmList["Kill"] = false
     end
